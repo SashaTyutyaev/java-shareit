@@ -20,10 +20,11 @@ public class UserController {
         return userService.addUser(user);
     }
 
-    @PatchMapping
-    public User updateUser(@RequestBody User user) {
-        return userService.updateUser(user);
+    @PatchMapping("{id}")
+    public User updateUser(@RequestBody User user, @PathVariable Integer id) {
+        return userService.updateUser(user, id);
     }
+
 
     @GetMapping
     public List<User> getAllUsers() {

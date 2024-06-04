@@ -2,12 +2,10 @@ package ru.practicum.shareit.user;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
+import ru.practicum.shareit.exceptions.EntityAlreadyExistsException;
 import ru.practicum.shareit.exceptions.EntityNotFoundException;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 @Slf4j
@@ -15,29 +13,50 @@ public class UserRepositoryImpl implements UserRepository {
 
     private final Map<Integer, User> users = new HashMap<>();
 
+    private final Set<String> userEmails = new HashSet<>();
+
     private int generatedId = 1;
 
-    private int generatedId() {
+    private int generateId() {
         return generatedId++;
     }
 
     @Override
     public User addUser(User user) {
-        user.setId(generatedId());
-        users.put(user.getId(), user);
-        log.info("Add user with ID - {}", user.getId());
-        return user;
+        if (!userEmails.contains(user.getEmail())) {
+            user.setId(generateId());
+            users.put(user.getId(), user);
+            userEmails.add(user.getEmail());
+            log.info("Add user with ID - {}", user.getId());
+            return user;
+        } else {
+            log.error("Email already in use");
+            throw new EntityAlreadyExistsException("Email is already in use");
+        }
     }
 
     @Override
-    public User updateUser(User user) {
-        if (!users.containsKey(user.getId())) {
-            log.error("User with ID {} not found", user.getId());
-            throw new EntityNotFoundException("User is not found");
+    public User updateUser(User user, Integer userId) {
+        if (users.containsKey(userId)) {
+            if (userEmails.contains(user.getEmail()) && user.getEmail() != null) {
+                throw new EntityAlreadyExistsException("Email is already in use");
+            }
+
+            if (user.getEmail() != null) {
+                userEmails.remove(user.getEmail());
+            }
+
+            if (user.getEmail() != null) {
+                users.get(userId).setEmail(user.getEmail());
+            }
+
+            if (user.getName() != null) {
+                users.get(userId).setName(user.getName());
+            }
+
+            return users.get(userId);
         } else {
-            users.put(user.getId(), user);
-            log.info("Update user with ID - {}", user.getId());
-            return user;
+            throw new EntityNotFoundException("User not found");
         }
     }
 
