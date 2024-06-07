@@ -2,15 +2,13 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 import ru.practicum.shareit.item.dto.ItemDto;
 
-import javax.validation.Valid;
+import java.util.Collections;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Validated
 public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
@@ -31,12 +29,16 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto getItemById(Integer itemId, Integer userId) {
-        return itemRepository.getItemByIdOfUser(itemId, userId);
+    public ItemDto getItemById(Integer itemId) {
+        return itemRepository.getItemById(itemId);
     }
 
     @Override
     public List<ItemDto> searchItems(String text) {
-        return itemRepository.searchItems(text);
+        if (text == null || text.isEmpty() || text.isBlank()) {
+            return Collections.emptyList();
+        } else {
+            return itemRepository.searchItems(text);
+        }
     }
 }

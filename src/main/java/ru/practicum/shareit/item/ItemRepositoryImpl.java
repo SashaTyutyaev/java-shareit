@@ -1,21 +1,29 @@
 package ru.practicum.shareit.item;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import ru.practicum.shareit.exceptions.EntityNotFoundException;
+import ru.practicum.shareit.exceptions.IncorrectParameterException;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.user.UserRepository;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Repository
 @Slf4j
 public class ItemRepositoryImpl implements ItemRepository {
-    private final List<ItemDto> items = new ArrayList<>();
-    private final Map<Integer, List<ItemDto>> usersItems = new HashMap<>();
 
-    private int generatedId = 0;
+    private final UserRepository userRepository;
+    private final Map<Integer, ItemDto> items = new HashMap<>();
+
+    private int generatedId = 1;
+
+    @Autowired
+    public ItemRepositoryImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     private int generateId() {
         return generatedId++;
@@ -23,58 +31,62 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     @Override
     public ItemDto addItem(ItemDto item, Integer userId) {
-        item.setId(generateId());
-        usersItems.compute(item.getOwnerId(), (userId2, userItems) -> {
-            if (userItems == null) {
-                userItems = new ArrayList<>();
-            }
-            userItems.add(item);
-            return userItems;
-        });
-        items.add(item);
-        log.info("Add item {} with owner ID - {} is success", item.getId(), userId);
-        return item;
+        if (userRepository.getUserById(userId) == null) {
+            log.error("User with id {} not found", userId);
+            throw new EntityNotFoundException("User with id " + userId + " not found");
+        } else {
+            item.setId(generateId());
+            item.setOwnerId(userId);
+            items.put(item.getId(), item);
+            log.info("Add item {} with owner ID - {} is success", item.getId(), userId);
+            return item;
+        }
     }
 
     @Override
     public ItemDto updateItem(ItemDto item, Integer itemId, Integer userId) {
-            ItemDto itemDto = items.get(itemId);
+        if (userRepository.getUserById(userId) == null) {
+            log.error("User with id {} not found", userId);
+            throw new EntityNotFoundException("User with id " + userId + " not found");
+        }
+        if (!Objects.equals(items.get(itemId).getOwnerId(), userId)) {
+            log.error("The item with id {} is not owned by user {}", itemId, userId);
+            throw new EntityNotFoundException("The item with id " + itemId + " is not owned by user " + userId);
+        }
+        ItemDto itemDto = items.get(itemId);
 
-            if (item.getName() != null && !item.getName().isBlank()) {
-                itemDto.setName(item.getName());
-            }
+        if (item.getName() != null && !item.getName().isBlank()) {
+            itemDto.setName(item.getName());
+        }
 
-            if (item.getDescription() != null && !item.getDescription().isBlank()) {
-                itemDto.setDescription(item.getDescription());
-            }
+        if (item.getDescription() != null && !item.getDescription().isBlank()) {
+            itemDto.setDescription(item.getDescription());
+        }
 
-            if (item.getIsAvailable() != null) {
-                itemDto.setIsAvailable(item.getIsAvailable());
-            }
-
-            return itemDto;
-
+        if (item.getAvailable() != null) {
+            itemDto.setAvailable(item.getAvailable());
+        }
+        return itemDto;
     }
 
     @Override
     public List<ItemDto> getAllItemsOfUser(Integer userId) {
-            log.info("Get all items of user {}", userId);
-            return usersItems.get(userId);
+        return items.values().stream()
+                .filter(item -> item.getOwnerId() == userId)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public ItemDto getItemByIdOfUser(Integer itemId, Integer userId) {
-        List<ItemDto> itemDtoList = usersItems.get(userId);
-        log.info("Get item {} of user {} is success", itemId, userId);
-        return itemDtoList.get(itemId);
+    public ItemDto getItemById(Integer itemId) {
+        return items.get(itemId);
     }
 
     @Override
     public List<ItemDto> searchItems(String text) {
         List<ItemDto> itemDtoList = new ArrayList<>();
-        for (ItemDto itemDto : items) {
+        for (ItemDto itemDto : items.values()) {
             if ((itemDto.getName().toUpperCase().contains(text.toUpperCase()) ||
-                    itemDto.getDescription().toUpperCase().contains(text.toUpperCase())) && itemDto.getIsAvailable()) {
+                    itemDto.getDescription().toUpperCase().contains(text.toUpperCase())) && itemDto.getAvailable()) {
                 itemDtoList.add(itemDto);
             }
         }

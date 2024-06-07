@@ -12,7 +12,7 @@ public interface ItemRepository {
 
     List<ItemDto> getAllItemsOfUser(Integer userId);
 
-    ItemDto getItemByIdOfUser(Integer itemId, Integer userId);
+    ItemDto getItemById(Integer itemId);
 
     List<ItemDto> searchItems(String text);
 
