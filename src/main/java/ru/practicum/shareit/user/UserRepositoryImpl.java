@@ -1,11 +1,9 @@
 package ru.practicum.shareit.user;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exceptions.EntityAlreadyExistsException;
 import ru.practicum.shareit.exceptions.EntityNotFoundException;
-import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.model.User;
@@ -56,7 +54,7 @@ public class UserRepositoryImpl implements UserRepository {
                 users.get(userId).setName(user.getName());
             }
 
-            User userDto =  users.get(userId);
+            User userDto = users.get(userId);
             return UserMapper.toUserDto(userDto);
         } else {
             throw new EntityNotFoundException("User not found");

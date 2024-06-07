@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exceptions.EntityNotFoundException;
-import ru.practicum.shareit.exceptions.IncorrectParameterException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.user.UserRepository;
 
