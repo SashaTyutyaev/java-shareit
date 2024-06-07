@@ -1,9 +1,14 @@
 package ru.practicum.shareit.user;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exceptions.EntityAlreadyExistsException;
 import ru.practicum.shareit.exceptions.EntityNotFoundException;
+import ru.practicum.shareit.item.ItemRepository;
+import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserMapper;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.*;
 
@@ -22,13 +27,13 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User addUser(User user) {
+    public UserDto addUser(User user) {
         if (!userEmails.contains(user.getEmail())) {
             user.setId(generateId());
             users.put(user.getId(), user);
             userEmails.add(user.getEmail());
             log.info("Add user with ID - {}", user.getId());
-            return user;
+            return UserMapper.toUserDto(user);
         } else {
             log.error("Email already in use");
             throw new EntityAlreadyExistsException("Email is already in use");
@@ -36,17 +41,14 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User updateUser(User user, Integer userId) {
+    public UserDto updateUser(User user, Integer userId) {
         if (users.containsKey(userId)) {
             if (userEmails.contains(user.getEmail()) && user.getEmail() != null) {
                 throw new EntityAlreadyExistsException("Email is already in use");
             }
 
             if (user.getEmail() != null) {
-                userEmails.remove(user.getEmail());
-            }
-
-            if (user.getEmail() != null) {
+                userEmails.remove(users.get(userId).getEmail());
                 users.get(userId).setEmail(user.getEmail());
             }
 
@@ -54,28 +56,32 @@ public class UserRepositoryImpl implements UserRepository {
                 users.get(userId).setName(user.getName());
             }
 
-            return users.get(userId);
+            User userDto =  users.get(userId);
+            return UserMapper.toUserDto(userDto);
         } else {
             throw new EntityNotFoundException("User not found");
         }
     }
 
     @Override
-    public List<User> getAllUsers() {
-        List<User> usersList = new ArrayList<>(users.values());
+    public List<UserDto> getAllUsers() {
+        List<UserDto> usersList = new ArrayList<>();
+        for (User user : users.values()) {
+            usersList.add(UserMapper.toUserDto(user));
+        }
         log.info("Get all users success");
         return usersList;
     }
 
     @Override
-    public User getUserById(Integer userId) {
+    public UserDto getUserById(Integer userId) {
         if (!users.containsKey(userId)) {
             log.error("User with ID {} not found", userId);
             throw new EntityNotFoundException("User is not found");
         } else {
             User user = users.get(userId);
             log.info("Get user with ID - {} success", userId);
-            return user;
+            return UserMapper.toUserDto(user);
         }
     }
 
@@ -85,6 +91,7 @@ public class UserRepositoryImpl implements UserRepository {
             log.error("User with ID {} not found", userId);
             throw new EntityNotFoundException("User is not found");
         } else {
+            userEmails.remove(users.get(userId).getEmail());
             users.remove(userId);
             log.info("Delete user with ID - {} success", userId);
         }
