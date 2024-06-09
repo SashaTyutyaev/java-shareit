@@ -4,8 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exceptions.EntityAlreadyExistsException;
 import ru.practicum.shareit.exceptions.EntityNotFoundException;
-import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.*;
@@ -25,13 +23,13 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public UserDto addUser(User user) {
+    public User addUser(User user) {
         if (!userEmails.contains(user.getEmail())) {
             user.setId(generateId());
             users.put(user.getId(), user);
             userEmails.add(user.getEmail());
             log.info("Add user with ID - {}", user.getId());
-            return UserMapper.toUserDto(user);
+            return user;
         } else {
             log.error("Email already in use");
             throw new EntityAlreadyExistsException("Email is already in use");
@@ -39,7 +37,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public UserDto updateUser(User user, Integer userId) {
+    public User updateUser(User user, Integer userId) {
         if (users.containsKey(userId)) {
             if (userEmails.contains(user.getEmail()) && user.getEmail() != null) {
                 throw new EntityAlreadyExistsException("Email is already in use");
@@ -54,32 +52,27 @@ public class UserRepositoryImpl implements UserRepository {
                 users.get(userId).setName(user.getName());
             }
 
-            User userDto = users.get(userId);
-            return UserMapper.toUserDto(userDto);
+            return users.get(userId);
         } else {
             throw new EntityNotFoundException("User not found");
         }
     }
 
     @Override
-    public List<UserDto> getAllUsers() {
-        List<UserDto> usersList = new ArrayList<>();
-        for (User user : users.values()) {
-            usersList.add(UserMapper.toUserDto(user));
-        }
+    public List<User> getAllUsers() {
         log.info("Get all users success");
-        return usersList;
+        return new ArrayList<>(users.values());
     }
 
     @Override
-    public UserDto getUserById(Integer userId) {
+    public User getUserById(Integer userId) {
         if (!users.containsKey(userId)) {
             log.error("User with ID {} not found", userId);
             throw new EntityNotFoundException("User is not found");
         } else {
             User user = users.get(userId);
             log.info("Get user with ID - {} success", userId);
-            return UserMapper.toUserDto(user);
+            return user;
         }
     }
 

@@ -4,10 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.model.User;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -17,19 +19,24 @@ public class UserService {
     private final UserRepository userRepository;
 
     public UserDto addUser(@Valid User user) {
-        return userRepository.addUser(user);
+        User userDto = userRepository.addUser(user);
+        return UserMapper.toUserDto(userDto);
     }
 
     public UserDto updateUser(User user, Integer userId) {
-        return userRepository.updateUser(user, userId);
+        User userDto = userRepository.updateUser(user, userId);
+        return UserMapper.toUserDto(userDto);
     }
 
     public List<UserDto> getAllUsers() {
-        return userRepository.getAllUsers();
+        return userRepository.getAllUsers().stream()
+                .map(UserMapper::toUserDto)
+                .collect(Collectors.toList());
     }
 
     public UserDto getUserById(Integer userId) {
-        return userRepository.getUserById(userId);
+        User userDto = userRepository.getUserById(userId);
+        return UserMapper.toUserDto(userDto);
     }
 
     public void deleteUserById(Integer userId) {
