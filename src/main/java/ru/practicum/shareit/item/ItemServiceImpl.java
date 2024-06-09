@@ -3,14 +3,12 @@ package ru.practicum.shareit.item;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 import ru.practicum.shareit.exceptions.EntityNotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
 
-import javax.validation.Valid;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
