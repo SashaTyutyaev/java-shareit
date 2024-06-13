@@ -1,5 +1,6 @@
 package ru.practicum.shareit.user;
 
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -12,8 +13,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 @Validated
+@AllArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
@@ -35,11 +36,12 @@ public class UserService {
     }
 
     public UserDto getUserById(Integer userId) {
-        User userDto = userRepository.getUserById(userId);
+        User userDto = userRepository.getUserById(userId).orElseThrow();
         return UserMapper.toUserDto(userDto);
     }
 
     public void deleteUserById(Integer userId) {
+        User userDto = userRepository.getUserById(userId).orElseThrow();
         userRepository.deleteUserById(userId);
     }
 }

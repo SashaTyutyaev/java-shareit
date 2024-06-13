@@ -8,6 +8,7 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.Collections;
 import java.util.List;
@@ -23,23 +24,16 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto addItem(ItemDto item, Integer userId) {
-        if (userRepository.getUserById(userId) == null) {
-            log.error("User with id {} not found", userId);
-            throw new EntityNotFoundException("User with id " + userId + " not found");
-        } else {
-            Item itemToSave = ItemMapper.toItemFromDto(item);
-            itemToSave.setOwner(userRepository.getUserById(userId));
-            return ItemMapper.toItemDto(itemRepository.addItem(itemToSave, userId));
-        }
+        User user = userRepository.getUserById(userId).orElseThrow();
+        Item itemToSave = ItemMapper.toItemFromDto(item);
+        itemToSave.setOwner(user);
+        return ItemMapper.toItemDto(itemRepository.addItem(itemToSave, userId));
     }
 
     @Override
     public ItemDto updateItem(ItemDto item, Integer itemId, Integer userId) {
-        if (userRepository.getUserById(userId) == null) {
-            log.error("User with id {} not found", userId);
-            throw new EntityNotFoundException("User with id " + userId + " not found");
-        }
-        if (!itemRepository.getItemById(itemId).getOwner().equals(userRepository.getUserById(userId))) {
+        User user = userRepository.getUserById(userId).orElseThrow();
+        if (!itemRepository.getItemById(itemId).getOwner().equals(user)) {
             log.error("The item with id {} is not owned by user {}", itemId, userId);
             throw new EntityNotFoundException("The item with id " + itemId + " is not owned by user " + userId);
         }

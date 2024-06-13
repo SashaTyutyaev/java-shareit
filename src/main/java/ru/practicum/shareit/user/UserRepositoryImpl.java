@@ -24,16 +24,15 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User addUser(User user) {
-        if (!userEmails.contains(user.getEmail())) {
-            user.setId(generateId());
-            users.put(user.getId(), user);
-            userEmails.add(user.getEmail());
-            log.info("Add user with ID - {}", user.getId());
-            return user;
-        } else {
+        if (userEmails.contains(user.getEmail())) {
             log.error("Email already in use");
             throw new EntityAlreadyExistsException("Email is already in use");
         }
+        user.setId(generateId());
+        users.put(user.getId(), user);
+        userEmails.add(user.getEmail());
+        log.info("Add user with ID - {}", user.getId());
+        return user;
     }
 
     @Override
@@ -65,26 +64,16 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User getUserById(Integer userId) {
-        if (!users.containsKey(userId)) {
-            log.error("User with ID {} not found", userId);
-            throw new EntityNotFoundException("User is not found");
-        } else {
-            User user = users.get(userId);
-            log.info("Get user with ID - {} success", userId);
-            return user;
-        }
+    public Optional<User> getUserById(Integer userId) {
+        User user = users.get(userId);
+        log.info("Get user with ID - {} success", userId);
+        return Optional.ofNullable(user);
     }
 
     @Override
     public void deleteUserById(Integer userId) {
-        if (!users.containsKey(userId)) {
-            log.error("User with ID {} not found", userId);
-            throw new EntityNotFoundException("User is not found");
-        } else {
-            userEmails.remove(users.get(userId).getEmail());
-            users.remove(userId);
-            log.info("Delete user with ID - {} success", userId);
-        }
+        userEmails.remove(users.get(userId).getEmail());
+        users.remove(userId);
+        log.info("Delete user with ID - {} success", userId);
     }
 }
