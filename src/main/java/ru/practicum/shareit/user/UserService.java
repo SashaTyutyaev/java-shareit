@@ -23,27 +23,22 @@ public class UserService {
     private final UserRepository userRepository;
 
     public UserDto addUser(@Valid User user) {
-        for (User userInList : userRepository.getAllUsers()) {
-            if (userInList.getEmail().equals(user.getEmail())) {
-                log.error("User with email already exists");
-                throw new EntityAlreadyExistsException("User with email " + user.getEmail() + " already exists");
-            }
+        if (userRepository.getUserByEmail(user.getEmail()).isPresent()) {
+            log.error("User with email already exists");
+            throw new EntityAlreadyExistsException("User with email " + user.getEmail() + " already exists");
         }
         User userDto = userRepository.addUser(user);
         return UserMapper.toUserDto(userDto);
     }
 
     public UserDto updateUser(User user, Integer userId) {
-        for (User userInList : userRepository.getAllUsers()) {
-            if (userInList.getEmail().equals(user.getEmail())) {
-                User user2 = getOptionalUserById(userId);
-                if (!user2.getEmail().equals(user.getEmail())) {
-                    log.error("User with email already exists");
-                    throw new EntityAlreadyExistsException("User with email " + user.getEmail() + " already exists");
-                }
+        if (userRepository.getUserByEmail(user.getEmail()).isPresent()) {
+            User user2 = getUserById(userId);
+            if (!user2.getEmail().equals(user.getEmail())) {
+                log.error("User with email already exists");
+                throw new EntityAlreadyExistsException("User with email " + user.getEmail() + " already exists");
             }
         }
-
         User userDto = userRepository.updateUser(user, userId);
         return UserMapper.toUserDto(userDto);
     }
@@ -54,17 +49,17 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public UserDto getUserById(Integer userId) {
-        User userDto = getOptionalUserById(userId);
+    public UserDto getUserDtoById(Integer userId) {
+        User userDto = getUserById(userId);
         return UserMapper.toUserDto(userDto);
     }
 
     public void deleteUserById(Integer userId) {
-        User userDto = getOptionalUserById(userId);
+        User userDto = getUserById(userId);
         userRepository.deleteUserById(userId);
     }
 
-    private User getOptionalUserById(Integer userId) {
+    private User getUserById(Integer userId) {
         return userRepository.getUserById(userId).orElseThrow(() -> {
             log.error("The user with id {} is not found", userId);
             return new EntityNotFoundException("The user with id " + userId + " is not found");

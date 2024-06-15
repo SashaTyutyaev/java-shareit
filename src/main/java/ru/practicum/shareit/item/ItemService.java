@@ -12,7 +12,7 @@ public interface ItemService {
 
     List<ItemDto> getAllItemsOfUser(Integer userId);
 
-    ItemDto getItemById(Integer itemId);
+    ItemDto getItemDtoById(Integer itemId);
 
     List<ItemDto> searchItems(String text);
 }

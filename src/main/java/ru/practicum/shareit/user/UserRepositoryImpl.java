@@ -58,4 +58,9 @@ public class UserRepositoryImpl implements UserRepository {
         users.remove(userId);
         log.info("Delete user with ID - {} success", userId);
     }
+
+    @Override
+    public Optional<User> getUserByEmail(String email) {
+        return users.values().stream().filter(user -> user.getEmail().equals(email)).findFirst();
+    }
 }
