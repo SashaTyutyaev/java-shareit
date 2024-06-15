@@ -24,7 +24,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto addItem(ItemDto item, Integer userId) {
-        User user = userRepository.getUserById(userId).orElseThrow();
+        User user = getOptionalUserById(userId);
         Item itemToSave = ItemMapper.toItemFromDto(item);
         itemToSave.setOwner(user);
         return ItemMapper.toItemDto(itemRepository.addItem(itemToSave, userId));
@@ -32,17 +32,18 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto updateItem(ItemDto item, Integer itemId, Integer userId) {
-        User user = userRepository.getUserById(userId).orElseThrow();
-        if (!itemRepository.getItemById(itemId).getOwner().equals(user)) {
+        User user = getOptionalUserById(userId);
+        Item optItem = getOptionalItemById(itemId);
+        if (!optItem.getOwner().equals(user)) {
             log.error("The item with id {} is not owned by user {}", itemId, userId);
             throw new EntityNotFoundException("The item with id " + itemId + " is not owned by user " + userId);
         }
-
         return ItemMapper.toItemDto(itemRepository.updateItem(ItemMapper.toItemFromDto(item), itemId, userId));
     }
 
     @Override
     public List<ItemDto> getAllItemsOfUser(Integer userId) {
+        getOptionalUserById(userId);
         return itemRepository.getAllItemsOfUser(userId).stream()
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
@@ -50,7 +51,8 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto getItemById(Integer itemId) {
-        return ItemMapper.toItemDto(itemRepository.getItemById(itemId));
+        Item item = getOptionalItemById(itemId);
+        return ItemMapper.toItemDto(item);
     }
 
     @Override
@@ -62,5 +64,19 @@ public class ItemServiceImpl implements ItemService {
                     .map(ItemMapper::toItemDto)
                     .collect(Collectors.toList());
         }
+    }
+
+    private Item getOptionalItemById(Integer itemId) {
+        return itemRepository.getItemById(itemId).orElseThrow(() -> {
+            log.error("The item with id {} is not found", itemId);
+            return new EntityNotFoundException("The item with id " + itemId + " is not found");
+        });
+    }
+
+    private User getOptionalUserById(Integer userId) {
+        return userRepository.getUserById(userId).orElseThrow(() -> {
+            log.error("The user with id {} is not found", userId);
+            return new EntityNotFoundException("The user with id " + userId + " is not found");
+        });
     }
 }

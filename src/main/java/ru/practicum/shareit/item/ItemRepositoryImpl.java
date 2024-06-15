@@ -4,10 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.item.model.Item;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
@@ -50,18 +47,22 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     @Override
     public List<Item> getAllItemsOfUser(Integer userId) {
+        log.info("Get all items of user {}", userId);
         return items.values().stream()
                 .filter(item -> Objects.equals(item.getOwner().getId(), userId))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public Item getItemById(Integer itemId) {
-        return items.get(itemId);
+    public Optional<Item> getItemById(Integer itemId) {
+        Item item = items.get(itemId);
+        log.info("Get item {} with owner ID - {} is success", itemId, item.getOwner().getId());
+        return Optional.ofNullable(item);
     }
 
     @Override
     public List<Item> searchItems(String text) {
+        log.info("Search items with text {}", text);
         return items.values().stream()
                 .filter(item -> item.getName().toUpperCase().contains(text.toUpperCase()) && item.getAvailable() ||
                         item.getDescription().toUpperCase().contains(text.toUpperCase()) && item.getAvailable())
