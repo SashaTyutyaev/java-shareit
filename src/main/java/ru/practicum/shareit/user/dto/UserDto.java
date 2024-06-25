@@ -20,5 +20,4 @@ public class UserDto {
     @NotNull
     @NotBlank
     private String email;
-    private List<ItemDto> userItems;
 }

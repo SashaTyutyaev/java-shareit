@@ -1,8 +1,10 @@
 package ru.practicum.shareit.user;
 
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import ru.practicum.shareit.exceptions.EntityAlreadyExistsException;
 import ru.practicum.shareit.exceptions.EntityNotFoundException;
@@ -22,33 +24,36 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    @Transactional()
     public UserDto addUser(@Valid User user) {
-        if (userRepository.getUserByEmail(user.getEmail()).isPresent()) {
-            log.error("User with email already exists");
-            throw new EntityAlreadyExistsException("User with email " + user.getEmail() + " already exists");
-        }
-        User userDto = userRepository.addUser(user);
+        User userDto = userRepository.save(user);
         return UserMapper.toUserDto(userDto);
     }
 
+    @Transactional()
     public UserDto updateUser(User user, Integer userId) {
-        if (userRepository.getUserByEmail(user.getEmail()).isPresent()) {
-            User user2 = getUserById(userId);
-            if (!user2.getEmail().equals(user.getEmail())) {
-                log.error("User with email already exists");
-                throw new EntityAlreadyExistsException("User with email " + user.getEmail() + " already exists");
-            }
+        User user2 = getUserById(userId);
+
+        if (user.getEmail() != null ) {
+            user2.setEmail(user.getEmail());
         }
-        User userDto = userRepository.updateUser(user, userId);
+
+        if (user.getName() != null) {
+            user2.setName(user.getName());
+        }
+
+        User userDto = userRepository.save(user2);
         return UserMapper.toUserDto(userDto);
     }
 
+    @Transactional(readOnly = true)
     public List<UserDto> getAllUsers() {
-        return userRepository.getAllUsers().stream()
+        return userRepository.findAll().stream()
                 .map(UserMapper::toUserDto)
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public UserDto getUserDtoById(Integer userId) {
         User userDto = getUserById(userId);
         return UserMapper.toUserDto(userDto);
@@ -56,11 +61,11 @@ public class UserService {
 
     public void deleteUserById(Integer userId) {
         User userDto = getUserById(userId);
-        userRepository.deleteUserById(userId);
+        userRepository.delete(userDto);
     }
 
     private User getUserById(Integer userId) {
-        return userRepository.getUserById(userId).orElseThrow(() -> {
+        return userRepository.findById(userId).orElseThrow(() -> {
             log.error("The user with id {} is not found", userId);
             return new EntityNotFoundException("The user with id " + userId + " is not found");
         });
