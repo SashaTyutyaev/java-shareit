@@ -1,13 +1,13 @@
 delete
 from bookings cascade;
 delete
-from comments cascade;
+from comments ;
 delete
-from requests cascade;
+from requests ;
 delete
-from items cascade;
+from items ;
 delete
-from users cascade;
+from users;
 
 alter sequence users_id_seq restart with 1;
 alter sequence items_id_seq restart with 1;
