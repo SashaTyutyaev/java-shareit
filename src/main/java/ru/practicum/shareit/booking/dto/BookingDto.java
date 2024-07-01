@@ -11,7 +11,6 @@ import ru.practicum.shareit.user.dto.UserDto;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.time.LocalDate;
 
 /**
  * TODO Sprint add-bookings.

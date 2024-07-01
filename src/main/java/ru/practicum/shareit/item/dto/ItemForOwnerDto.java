@@ -4,10 +4,8 @@ package ru.practicum.shareit.item.dto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
-import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.ShortBookingDto;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
