@@ -23,4 +23,16 @@ public class ItemMapper {
                 .owner(itemDto.getOwner())
                 .build();
     }
+
+    public static ItemForOwnerDto toItemForOwnerDto(Item item) {
+        return ItemForOwnerDto.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .description(item.getDescription())
+                .available(item.getAvailable())
+                .owner(item.getOwner())
+                .lastBooking(null)
+                .nextBooking(null)
+                .build();
+    }
 }
