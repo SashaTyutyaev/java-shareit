@@ -1,21 +1,22 @@
 package ru.practicum.shareit.item;
 
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
-import java.util.Optional;
 
+@Repository
+public interface ItemRepository extends JpaRepository<Item, Integer> {
 
-public interface ItemRepository {
+    @Query("select i from Item as i " +
+            "where (upper(i.name) like upper(concat('%', ?1, '%')) " +
+            "or upper(i.description) like upper(concat('%', ?1, '%'))) " +
+            "and i.available = true")
+    List<Item> findByText(String text);
 
-    Item addItem(Item item, Integer userId);
-
-    Item updateItem(Item item, Integer itemId, Integer userId);
-
-    List<Item> getAllItemsOfUser(Integer userId);
-
-    Optional<Item> getItemById(Integer itemId);
-
-    List<Item> searchItems(String text);
+    List<Item> findAllByOwnerId(Integer userId, Sort sort);
 
 }

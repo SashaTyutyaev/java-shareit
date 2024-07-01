@@ -2,16 +2,15 @@ package ru.practicum.shareit.user.dto;
 
 import lombok.Builder;
 import lombok.Data;
-import ru.practicum.shareit.item.dto.ItemDto;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.List;
+import java.io.Serializable;
 
 @Builder
 @Data
-public class UserDto {
+public class UserDto implements Serializable {
     private Integer id;
     @NotBlank
     @NotNull
@@ -20,5 +19,4 @@ public class UserDto {
     @NotNull
     @NotBlank
     private String email;
-    private List<ItemDto> userItems;
 }
