@@ -25,7 +25,7 @@ public class ItemDto implements Serializable {
     @NotNull
     private String description;
 
-    private User owner;
+    private Integer ownerId;
 
     @NotNull
     private Boolean available;

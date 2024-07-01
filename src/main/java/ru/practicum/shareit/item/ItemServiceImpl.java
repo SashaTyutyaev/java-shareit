@@ -43,7 +43,7 @@ public class ItemServiceImpl implements ItemService {
     @Transactional()
     public ItemDto addItem(ItemDto item, Integer userId) {
         User user = getUserById(userId);
-        Item itemToSave = ItemMapper.toItemFromDto(item);
+        Item itemToSave = ItemMapper.toItemFromDto(item, user);
         itemToSave.setOwner(user);
         return ItemMapper.toItemDto(itemRepository.save(itemToSave));
     }
