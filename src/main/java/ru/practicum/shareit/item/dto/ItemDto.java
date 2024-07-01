@@ -7,6 +7,7 @@ import ru.practicum.shareit.user.model.User;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 /**
  * TODO Sprint add-controllers.
@@ -14,7 +15,7 @@ import javax.validation.constraints.NotNull;
 @Data
 @SuperBuilder
 @Jacksonized
-public class ItemDto {
+public class ItemDto implements Serializable {
     private Integer id;
 
     @NotNull

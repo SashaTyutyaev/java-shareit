@@ -6,10 +6,11 @@ import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 @Data
 @Builder
-public class CommentDto {
+public class CommentDto implements Serializable {
 
     private Integer id;
 
