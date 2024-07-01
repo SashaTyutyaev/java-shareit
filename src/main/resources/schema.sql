@@ -1,5 +1,4 @@
-delete
-from bookings cascade;
+delete from bookings cascade;
 delete
 from comments cascade;
 delete
