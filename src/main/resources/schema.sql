@@ -1,18 +1,4 @@
-delete from bookings cascade;
-delete
-from comments cascade;
-delete
-from requests cascade;
-delete
-from items cascade;
-delete
-from users cascade;
-
-alter sequence users_id_seq restart with 1;
-alter sequence items_id_seq restart with 1;
-alter sequence requests_id_seq restart with 1;
-alter sequence bookings_id_seq restart with 1;
-alter sequence comments_id_seq restart with 1;
+drop table if exists users,requests,items,comments,bookings cascade ;
 
 CREATE TABLE IF NOT EXISTS users
 (
