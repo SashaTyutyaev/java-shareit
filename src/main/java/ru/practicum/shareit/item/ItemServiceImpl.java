@@ -40,7 +40,6 @@ public class ItemServiceImpl implements ItemService {
 
 
     @Override
-    @Transactional()
     public ItemDto addItem(ItemDto item, Integer userId) {
         User user = getUserById(userId);
         Item itemToSave = ItemMapper.toItemFromDto(item, user);
@@ -49,7 +48,6 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @Transactional()
     public ItemDto updateItem(ItemDto item, Integer itemId, Integer userId) {
         User user = getUserById(userId);
         Item optItem = getItemById(itemId);
@@ -73,7 +71,6 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<ItemForOwnerDto> getAllItemsOfUser(Integer userId) {
         getUserById(userId);
         List<Item> items = itemRepository.findAllByOwnerId(userId, SORT);
@@ -91,7 +88,6 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public ItemForOwnerDto getItemDtoById(Integer itemId, Integer userId) {
         getUserById(userId);
         Item item = getItemById(itemId);
@@ -104,7 +100,6 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<ItemDto> searchItems(String text) {
         if (text == null || text.isEmpty() || text.isBlank()) {
             return Collections.emptyList();
@@ -116,7 +111,6 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    @Transactional
     public CommentDto addComment(CommentDto commentDto, Integer userId, Integer itemId) {
         User author = getUserById(userId);
         Item item = getItemById(itemId);

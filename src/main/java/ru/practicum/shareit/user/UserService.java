@@ -22,13 +22,11 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    @Transactional()
     public UserDto addUser(@Valid User user) {
         User userDto = userRepository.save(user);
         return UserMapper.toUserDto(userDto);
     }
 
-    @Transactional()
     public UserDto updateUser(User user, Integer userId) {
         User user2 = getUserById(userId);
 
@@ -44,14 +42,12 @@ public class UserService {
         return UserMapper.toUserDto(userDto);
     }
 
-    @Transactional(readOnly = true)
     public List<UserDto> getAllUsers() {
         return userRepository.findAll().stream()
                 .map(UserMapper::toUserDto)
                 .collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true)
     public UserDto getUserDtoById(Integer userId) {
         User userDto = getUserById(userId);
         return UserMapper.toUserDto(userDto);

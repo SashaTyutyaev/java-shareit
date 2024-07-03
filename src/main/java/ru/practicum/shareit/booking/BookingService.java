@@ -29,7 +29,6 @@ public class BookingService {
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
 
-    @Transactional
     public BookingDto createBooking(BookingDto bookingDto, Integer userId) {
 
         User user = getUserById(userId);
@@ -48,7 +47,6 @@ public class BookingService {
         return BookingMapper.toBookingDto(bookingRepository.save(booking));
     }
 
-    @Transactional
     public BookingDto updateBooking(Integer bookingId, boolean approved, Integer userId) {
         getUserById(userId);
         Booking foundBooking = getBookingById(bookingId);
@@ -70,7 +68,6 @@ public class BookingService {
         return BookingMapper.toBookingDto(bookingRepository.save(foundBooking));
     }
 
-    @Transactional(readOnly = true)
     public BookingDto getBookingByItemOwnerOrBooker(Integer bookingId, Integer userId) {
         Booking foundBooking = getBookingById(bookingId);
         if (!foundBooking.getBooker().getId().equals(userId) &&
@@ -81,7 +78,6 @@ public class BookingService {
         return BookingMapper.toBookingDto(foundBooking);
     }
 
-    @Transactional(readOnly = true)
     public List<BookingDto> getAllByBookerId(Integer userId, String state) {
         List<Booking> bookings;
         try {
@@ -97,7 +93,6 @@ public class BookingService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true)
     public List<BookingDto> getAllByOwnerId(Integer ownerId, String state) {
         List<Booking> bookings;
         try {
