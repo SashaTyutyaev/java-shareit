@@ -145,7 +145,11 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private void validatePageable(Integer from, Integer size) {
-        if (from == null && size == null && from < 0 && size < 0) {
+        if (from == null || from < 0) {
+            log.error("Params from and size must be higher than 0");
+            throw new IncorrectParameterException("Params from and size must be higher than 0");
+        }
+        if (size == null || size < 0) {
             log.error("Params from and size must be higher than 0");
             throw new IncorrectParameterException("Params from and size must be higher than 0");
         }
