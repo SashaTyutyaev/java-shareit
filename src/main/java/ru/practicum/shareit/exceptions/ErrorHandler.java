@@ -1,5 +1,6 @@
 package ru.practicum.shareit.exceptions;
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -21,7 +22,7 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleThrowable(final Throwable e) {
         return new ErrorResponse(
-                "Validation exception"
+                "Unexpected error"
         );
     }
 
@@ -35,8 +36,8 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleValidationError(final MethodArgumentNotValidException exception) {
-        return new ErrorResponse(exception.getMessage());
+    public ErrorResponse handleValidationError(final MethodArgumentNotValidException e) {
+        return new ErrorResponse("Validation exception");
     }
 
     @ExceptionHandler
@@ -46,8 +47,20 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleDataAccessException(final DataAccessException e) {
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleEntityNotFound(final NoSuchElementException e) {
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleIllegalArgumentException(final IllegalArgumentException e) {
         return new ErrorResponse(e.getMessage());
     }
 }

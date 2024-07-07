@@ -1,26 +1,31 @@
 package ru.practicum.shareit.item.dto;
 
-import lombok.Builder;
 import lombok.Data;
-import ru.practicum.shareit.user.model.User;
+import lombok.experimental.SuperBuilder;
+import lombok.extern.jackson.Jacksonized;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 /**
  * TODO Sprint add-controllers.
  */
 @Data
-@Builder
-public class ItemDto {
+@SuperBuilder
+@Jacksonized
+public class ItemDto implements Serializable {
     private Integer id;
+
     @NotNull
-    @NotBlank
+    @NotEmpty
     private String name;
+
     @NotNull
-    @NotBlank
     private String description;
-    private User owner;
+
+    private Integer ownerId;
+
     @NotNull
     private Boolean available;
 }
