@@ -28,4 +28,6 @@ public class ItemDto implements Serializable {
 
     @NotNull
     private Boolean available;
+
+    private Integer requestId;
 }

@@ -18,4 +18,5 @@ public class ItemForOwnerDto extends ItemDto {
     private ShortBookingDto nextBooking;
 
     private List<CommentDto> comments;
+
 }
