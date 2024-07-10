@@ -2,7 +2,6 @@ package ru.practicum.shareit.request;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -88,10 +87,10 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         if (from >= 0 && size > 0) {
             Pageable pageable = PageRequest.of(from, size);
 
-            Page<ItemRequest> itemRequestPage = itemRequestRepository.findAll(userId, pageable);
+            List<ItemRequest> itemRequestPage = itemRequestRepository.findOtherRequestsByRequestorId(userId, pageable);
 
             List<ItemRequestForOwnerDto> itemRequestForOwnerDtoList =
-                    itemRequestPage.getContent().stream()
+                    itemRequestPage.stream()
                             .map(ItemRequestMapper::toItemRequestForOwnerDto)
                             .collect(Collectors.toList());
 
