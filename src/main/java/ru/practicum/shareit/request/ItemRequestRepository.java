@@ -15,5 +15,5 @@ public interface ItemRequestRepository extends JpaRepository<ItemRequest, Intege
     @Query("select ir from ItemRequest as ir " +
             "where ir.requestor.id <> ?1 " +
             "order by ir.createdDate asc")
-    List<ItemRequest> findOtherRequestsByRequestorId(Integer requestorId, Pageable pageable);
+    Page<ItemRequest> findOtherRequestsByRequestorId(Integer requestorId, Pageable pageable);
 }

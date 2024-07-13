@@ -87,7 +87,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         if (from >= 0 && size > 0) {
             Pageable pageable = PageRequest.of(from, size);
 
-            List<ItemRequest> itemRequestPage = itemRequestRepository.findOtherRequestsByRequestorId(userId, pageable);
+            List<ItemRequest> itemRequestPage = itemRequestRepository.findOtherRequestsByRequestorId(userId, pageable).getContent();
 
             List<ItemRequestForOwnerDto> itemRequestForOwnerDtoList =
                     itemRequestPage.stream()

@@ -24,6 +24,8 @@ class ItemRequestRepositoryTest {
     private ItemRequestRepository itemRequestRepository;
 
     private User user1;
+    private User user2;
+    private User user3;
     private ItemRequest request1;
     private ItemRequest request2;
     private ItemRequest request3;
@@ -31,24 +33,24 @@ class ItemRequestRepositoryTest {
     @Test
     public void findOtherRequestsByRequestorIdSuccess() {
         Pageable pageable = Pageable.ofSize(10);
-        user1 = createUser(1, "User1Name", "user1@mail.ru");
-        User user2 = createUser(2, "User2Name", "user2@mail.ru");
-        User user3 = createUser(3, "User3Name", "user3@mail.ru");
+        user1 = createUser("User1Name", "user1@mail.ru");
+        user2 = createUser("User2Name", "user2@mail.ru");
+        user3 = createUser("User3Name", "user3@mail.ru");
         request1 = createRequest(1, "Request1Description", user2);
         request2 = createRequest(2, "Request2Description", user1);
         request3 = createRequest(3, "Request3Description", user3);
 
-        List<ItemRequest> requests = itemRequestRepository.findOtherRequestsByRequestorId(user1.getId(), pageable);
+        List<ItemRequest> requests = itemRequestRepository.findOtherRequestsByRequestorId(user1.getId(), pageable).getContent();
         assertEquals(2, requests.size());
         assertEquals(request1, requests.get(0));
         assertEquals(request3, requests.get(1));
 
-        List<ItemRequest> newRequests = itemRequestRepository.findOtherRequestsByRequestorId(user2.getId(), pageable);
+        List<ItemRequest> newRequests = itemRequestRepository.findOtherRequestsByRequestorId(user2.getId(), pageable).getContent();
         assertEquals(2, newRequests.size());
         assertEquals(request2, newRequests.get(0));
         assertEquals(request3, newRequests.get(1));
 
-        List<ItemRequest> newRequests2 = itemRequestRepository.findOtherRequestsByRequestorId(user3.getId(), pageable);
+        List<ItemRequest> newRequests2 = itemRequestRepository.findOtherRequestsByRequestorId(user3.getId(), pageable).getContent();
         assertEquals(2, newRequests2.size());
         assertEquals(request1, newRequests2.get(0));
         assertEquals(request2, newRequests2.get(1));
@@ -57,9 +59,9 @@ class ItemRequestRepositoryTest {
     @Test
     public void findOtherRequestsByRequestorIdWithoutRequests() {
         Pageable pageable = Pageable.ofSize(10);
-        user1 = createUser(1, "User1Name", "user1@mail.ru");
+        user1 = createUser("User1Name", "user1@mail.ru");
 
-        List<ItemRequest> requests = itemRequestRepository.findOtherRequestsByRequestorId(user1.getId(), pageable);
+        List<ItemRequest> requests = itemRequestRepository.findOtherRequestsByRequestorId(user1.getId(), pageable).getContent();
         assertTrue(requests.isEmpty());
     }
 
@@ -67,7 +69,7 @@ class ItemRequestRepositoryTest {
     public void findAllByRequestorIdSuccess() {
         Sort sort = Sort.by(Sort.Direction.ASC, "createdDate");
 
-        user1 = createUser(1, "User1Name", "user1@mail.ru");
+        user1 = createUser("User1Name", "user1@mail.ru");
         request1 = createRequest(1, "Request1Description", user1);
         request2 = createRequest(2, "Request2Description", user1);
         request3 = createRequest(3, "Request3Description", user1);
@@ -85,15 +87,14 @@ class ItemRequestRepositoryTest {
     @Test
     public void findAllByRequestorIdWithoutRequests() {
         Sort sort = Sort.by(Sort.Direction.ASC, "createdDate");
-        user1 = createUser(1, "User1Name", "user1@mail.ru");
+        user1 = createUser("User1Name", "user1@mail.ru");
 
         List<ItemRequest> requests = itemRequestRepository.findAllByRequestorId(user1.getId(), sort);
         assertTrue(requests.isEmpty());
     }
 
-    private User createUser(Integer id, String name, String email) {
+    private User createUser(String name, String email) {
         User user = User.builder()
-                .id(id)
                 .name(name)
                 .email(email)
                 .build();

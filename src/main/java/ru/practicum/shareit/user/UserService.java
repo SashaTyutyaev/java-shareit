@@ -14,16 +14,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Validated
 @AllArgsConstructor
 @Slf4j
 public class UserService {
 
     private final UserRepository userRepository;
 
-    public UserDto addUser(@Valid User user) {
-        User userDto = userRepository.save(user);
-        return UserMapper.toUserDto(userDto);
+    public UserDto addUser(UserDto userDto) {
+        userRepository.save(UserMapper.toUser(userDto));
+        return userDto;
     }
 
     public UserDto updateUser(User user, Integer userId) {
@@ -37,7 +36,7 @@ public class UserService {
             user2.setName(user.getName());
         }
 
-        User userDto = userRepository.save(user2);
+        User userDto = userRepository.saveAndFlush(user2);
         return UserMapper.toUserDto(userDto);
     }
 
