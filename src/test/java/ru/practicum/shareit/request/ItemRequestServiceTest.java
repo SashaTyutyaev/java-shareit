@@ -5,9 +5,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import ru.practicum.shareit.exceptions.EntityNotFoundException;
+import ru.practicum.shareit.exceptions.IncorrectParameterException;
 import ru.practicum.shareit.item.ItemRepository;
+import ru.practicum.shareit.item.dto.ItemForOwnerDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
@@ -24,7 +28,8 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ItemRequestServiceTest {
@@ -104,10 +109,66 @@ class ItemRequestServiceTest {
     }
 
     @Test
-    void getRequestById() {
+    void getRequestByIdThrowsEntityNotFoundExceptionWhenUserNotFound() {
+        when(userRepository.findById(anyInt())).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> itemRequestService.getRequestById(1, 1));
     }
 
     @Test
-    void getAllRequestsPageable() {
+    void getRequestByIdThrowsEntityNotFoundExceptionWhenItemRequestNotFound() {
+        when(userRepository.findById(anyInt())).thenReturn(Optional.of(user));
+        when(itemRequestRepository.findById(anyInt())).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> itemRequestService.getRequestById(1, 1));
+    }
+
+    @Test
+    void getRequestByIdSuccess() {
+        when(userRepository.findById(anyInt())).thenReturn(Optional.of(user));
+        when(itemRequestRepository.findById(anyInt())).thenReturn(Optional.of(itemRequest));
+        when(itemRepository.findAllByRequestId(anyInt())).thenReturn(items);
+
+        ItemRequestForOwnerDto request = itemRequestService.getRequestById(1, 1);
+        assertNotNull(request);
+        assertEquals(itemRequest.getId(), request.getId());
+        assertEquals(itemRequest.getDescription(), request.getDescription());
+        assertEquals(itemRequest.getRequestor().getId(), request.getRequestorId());
+        assertEquals(request.getItems(), items.stream().map(ItemMapper::toItemDto).collect(Collectors.toList()));
+    }
+
+    @Test
+    void getAllRequestsPageableThrowsEntityNotFoundExceptionWhenUserNotFound() {
+        when(userRepository.findById(anyInt())).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> itemRequestService.getAllRequestsPageable(1, 1, 1));
+    }
+
+    @Test
+    void getAllRequestsPageableThrowsIncorrectParameterExceptionWhenInvalidParams() {
+        when(userRepository.findById(anyInt())).thenReturn(Optional.of(user));
+        assertThrows(IncorrectParameterException.class, () -> itemRequestService.getAllRequestsPageable(2, -1, -1));
+        assertThrows(IncorrectParameterException.class, () -> itemRequestService.getAllRequestsPageable(2, -1, 5));
+        assertThrows(IncorrectParameterException.class, () -> itemRequestService.getAllRequestsPageable(2, 0, 0));
+    }
+
+    @Test
+    void getAllRequestsPageableSuccessEmptyList() {
+        when(userRepository.findById(anyInt())).thenReturn(Optional.of(user));
+
+        List<ItemRequestForOwnerDto> requests = itemRequestService.getAllRequestsPageable(2, null, null);
+        assertNotNull(requests);
+        assertTrue(requests.isEmpty());
+    }
+
+    @Test
+    void getAllRequestsPageableSuccess() {
+        when(userRepository.findById(anyInt())).thenReturn(Optional.of(user));
+        when(itemRequestRepository.findOtherRequestsByRequestorId(anyInt(), any(Pageable.class))).thenReturn(Page.empty());
+
+        List<ItemRequestForOwnerDto> requests = itemRequestService.getAllRequestsPageable(2, 1, 10);
+
+        assertNotNull(requests);
+        assertTrue(requests.isEmpty());
     }
 }

@@ -66,11 +66,11 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public ItemRequestForOwnerDto getRequestById(Integer requestId, Integer userId) {
         getUserById(userId);
+        ItemRequest itemRequest = getItemRequestById(requestId);
         List<ItemDto> items = itemRepository.findAllByRequestId(requestId)
                 .stream()
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
-        ItemRequest itemRequest = getItemRequestById(requestId);
         ItemRequestForOwnerDto itemRequestForOwnerDto = ItemRequestMapper.toItemRequestForOwnerDto(itemRequest);
         itemRequestForOwnerDto.setItems(items);
         return itemRequestForOwnerDto;
@@ -118,13 +118,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         return itemRequestRepository.findById(requestId).orElseThrow(() -> {
             log.error("The request with id {} is not found", requestId);
             return new EntityNotFoundException("The request with id " + requestId + " is not found");
-        });
-    }
-
-    private Item getItemById(Integer itemId) {
-        return itemRepository.findById(itemId).orElseThrow(() -> {
-            log.error("The item with id {} is not found", itemId);
-            return new EntityNotFoundException("The item with id " + itemId + " is not found");
         });
     }
 }
