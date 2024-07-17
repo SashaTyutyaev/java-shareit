@@ -482,8 +482,8 @@ class ItemServiceImplTest {
     void addCommentSuccess() {
         when(userRepository.findById(anyInt())).thenReturn(Optional.of(user));
         when(itemRepository.findById(anyInt())).thenReturn(Optional.of(item));
-        when(bookingService.getAllByBookerId(anyInt(), anyString(), anyInt(), anyInt())).
-                thenReturn(Stream.of(booking).map(BookingMapper::toBookingDto).collect(Collectors.toList()));
+        when(bookingService.getAllByBookerId(anyInt(), anyString(), anyInt(), anyInt()))
+                .thenReturn(Stream.of(booking).map(BookingMapper::toBookingDto).collect(Collectors.toList()));
         when(commentRepository.save(any(Comment.class))).thenReturn(comment);
 
         CommentDto result = itemService.addComment(CommentMapper.toCommentDto(comment), 1, 1);
