@@ -65,10 +65,11 @@ public class BookingService {
             foundBooking.setStatus(Status.REJECTED);
         }
 
-        return BookingMapper.toBookingDto(bookingRepository.save(foundBooking));
+        return BookingMapper.toBookingDto(bookingRepository.saveAndFlush(foundBooking));
     }
 
     public BookingDto getBookingByItemOwnerOrBooker(Integer bookingId, Integer userId) {
+        getUserById(userId);
         Booking foundBooking = getBookingById(bookingId);
         if (!foundBooking.getBooker().getId().equals(userId) &&
                 !foundBooking.getItem().getOwner().getId().equals(userId)) {
