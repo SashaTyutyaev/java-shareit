@@ -489,8 +489,8 @@ class ItemServiceImplTest {
         CommentDto result = itemService.addComment(CommentMapper.toCommentDto(comment), 1, 1);
 
         assertNotNull(result);
-        assertEquals(result.getId(),comment.getId());
-        assertEquals(result.getAuthorName(),comment.getAuthor().getName());
+        assertEquals(result.getId(), comment.getId());
+        assertEquals(result.getAuthorName(), comment.getAuthor().getName());
         assertEquals(result.getItemId(), comment.getItem().getId());
         assertEquals(result.getText(), comment.getText());
     }

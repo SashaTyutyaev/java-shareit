@@ -64,8 +64,8 @@ public class BookingServiceIntegrationTest {
         List<BookingDto> result = bookingService.getAllByOwnerId(1, "ALL", 1, 10);
 
         assertNotNull(result);
-        assertEquals(1,result.size());
-        assertEquals(result.get(0).getId(),booking.getId());
+        assertEquals(1, result.size());
+        assertEquals(result.get(0).getId(), booking.getId());
     }
 
     private void createBooking() {

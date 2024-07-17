@@ -11,7 +11,6 @@ import ru.practicum.shareit.exceptions.IncorrectParameterException;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
-import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestForOwnerDto;
 import ru.practicum.shareit.request.dto.ItemRequestMapper;

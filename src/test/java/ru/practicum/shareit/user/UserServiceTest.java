@@ -120,12 +120,12 @@ class UserServiceTest {
         when(userRepository.findById(1)).thenReturn(Optional.of(user));
         when(userRepository.saveAndFlush(any(User.class))).thenReturn(updatedUser);
 
-        UserDto resultUser = userService.updateUser(updatedUser,1);
+        UserDto resultUser = userService.updateUser(updatedUser, 1);
 
         assertNotNull(resultUser);
-        assertEquals(resultUser.getId(),updatedUser.getId());
-        assertEquals(resultUser.getName(),updatedUser.getName());
-        assertEquals(resultUser.getEmail(),updatedUser.getEmail());
+        assertEquals(resultUser.getId(), updatedUser.getId());
+        assertEquals(resultUser.getName(), updatedUser.getName());
+        assertEquals(resultUser.getEmail(), updatedUser.getEmail());
         assertNull(resultUser.getEmail());
         assertNull(resultUser.getName());
     }
