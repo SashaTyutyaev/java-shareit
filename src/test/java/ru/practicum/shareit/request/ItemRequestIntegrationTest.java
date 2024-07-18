@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
@@ -18,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 public class ItemRequestIntegrationTest {
 
     @Autowired
@@ -28,6 +30,9 @@ public class ItemRequestIntegrationTest {
 
     @Autowired
     ItemService itemService;
+
+    @Autowired
+    ItemRequestRepository itemRequestRepository;
 
     private ItemDto item;
     private ItemDto item2;
@@ -43,6 +48,7 @@ public class ItemRequestIntegrationTest {
     }
 
     @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     void getAllItemRequestsByOwnerSuccess() {
         List<ItemRequestForOwnerDto> requests = itemRequestService.getAllItemRequestsByOwner(user.getId());
 
@@ -121,8 +127,8 @@ public class ItemRequestIntegrationTest {
                 .name("itemName")
                 .description("description")
                 .available(true)
-                .requestId(1)
-                .ownerId(1)
+                .requestId(request.getId())
+                .ownerId(user.getId())
                 .build();
 
         itemService.addItem(item, user.getId());
@@ -132,8 +138,8 @@ public class ItemRequestIntegrationTest {
                 .name("item2Name")
                 .description("2description")
                 .available(true)
-                .requestId(3)
-                .ownerId(2)
+                .requestId(request3.getId())
+                .ownerId(user2.getId())
                 .build();
 
         itemService.addItem(item2, user2.getId());

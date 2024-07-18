@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -17,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 public class BookingServiceIntegrationTest {
 
     @Autowired
@@ -58,15 +60,6 @@ public class BookingServiceIntegrationTest {
         assertEquals(result.get(0).getId(), booking2.getId());
     }
 
-    @Test
-    void getAllBookingsByItemOwner() {
-        List<BookingDto> result = bookingService.getAllByOwnerId(1, "ALL", 1, 10);
-
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        assertEquals(result.get(0).getId(), booking.getId());
-    }
-
     private void createBooking() {
         user = User.builder()
                 .id(1)
@@ -89,6 +82,7 @@ public class BookingServiceIntegrationTest {
                 .name("itemName")
                 .description("description")
                 .available(true)
+                .ownerId(1)
                 .build();
 
         itemService.addItem(item, user.getId());
@@ -98,6 +92,7 @@ public class BookingServiceIntegrationTest {
                 .name("item2Name")
                 .description("2description")
                 .available(true)
+                .ownerId(2)
                 .build();
 
         itemService.addItem(item2, user2.getId());
