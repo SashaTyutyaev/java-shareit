@@ -265,7 +265,7 @@ class ItemServiceImplTest {
         assertEquals(items.get(0).getId(), item.getId());
         assertEquals(items.get(0).getName(), item.getName());
         assertEquals(items.get(0).getDescription(), item.getDescription());
-        assertNull(items.get(0).getComments());
+        assertTrue(items.get(0).getComments().isEmpty());
         assertNull(items.get(0).getNextBooking());
         assertNull(items.get(0).getLastBooking());
     }
@@ -284,7 +284,7 @@ class ItemServiceImplTest {
         assertEquals(items.get(0).getName(), item.getName());
         assertEquals(items.get(0).getDescription(), item.getDescription());
         assertEquals(items.get(0).getLastBooking(), BookingMapper.toShortBooking(booking));
-        assertNull(items.get(0).getComments());
+        assertTrue(items.get(0).getComments().isEmpty());
         assertNull(items.get(0).getNextBooking());
     }
 
@@ -355,7 +355,7 @@ class ItemServiceImplTest {
         assertEquals(result.getId(), item.getId());
         assertEquals(result.getDescription(), item.getDescription());
         assertEquals(result.getAvailable(), item.getAvailable());
-        assertNull(result.getComments());
+        assertTrue(result.getComments().isEmpty());
         assertNull(result.getNextBooking());
         assertNull(result.getLastBooking());
     }
@@ -393,7 +393,7 @@ class ItemServiceImplTest {
         assertEquals(result.getAvailable(), item.getAvailable());
         assertEquals(result.getLastBooking(), BookingMapper.toShortBooking(booking));
         assertNull(result.getNextBooking());
-        assertNull(result.getComments());
+        assertTrue(result.getComments().isEmpty());
     }
 
     @Test

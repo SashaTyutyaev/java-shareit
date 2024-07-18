@@ -10,6 +10,7 @@ import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestForOwnerDto;
 import ru.practicum.shareit.user.UserService;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.Collections;
 import java.util.List;
@@ -34,8 +35,8 @@ public class ItemRequestIntegrationTest {
     private ItemRequestDto request;
     private ItemRequestDto request2;
     private ItemRequestDto request3;
-    private UserDto user;
-    private UserDto user2;
+    private User user;
+    private User user2;
 
     @BeforeEach
     void setUp() {
@@ -79,7 +80,7 @@ public class ItemRequestIntegrationTest {
 
 
     private void createRequests() {
-        user = UserDto.builder()
+        user = User.builder()
                 .id(1)
                 .name("User")
                 .email("mail@mail.ru")
@@ -87,7 +88,7 @@ public class ItemRequestIntegrationTest {
 
         userService.addUser(user);
 
-        user2 = UserDto.builder()
+        user2 = User.builder()
                 .id(2)
                 .name("User2")
                 .email("mail2@mail.ru")

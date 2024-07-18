@@ -19,8 +19,8 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public UserDto addUser(@RequestBody @Valid UserDto userDto) {
-        return userService.addUser(userDto);
+    public UserDto addUser(@RequestBody @Valid User user) {
+        return userService.addUser(user);
     }
 
     @PatchMapping("{id}")

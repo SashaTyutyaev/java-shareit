@@ -18,9 +18,9 @@ public class UserServiceIntegrationTest {
     @Autowired
     UserService userService;
 
-    private UserDto user;
-    private UserDto user2;
-    private UserDto user3;
+    private User user;
+    private User user2;
+    private User user3;
 
     @BeforeEach
     void setUp() {
@@ -128,7 +128,7 @@ public class UserServiceIntegrationTest {
 
 
     private void createUsers() {
-        user = UserDto.builder()
+        user = User.builder()
                 .id(1)
                 .name("User")
                 .email("mail@mail.ru")
@@ -136,7 +136,7 @@ public class UserServiceIntegrationTest {
 
         userService.addUser(user);
 
-        user2 = UserDto.builder()
+        user2 = User.builder()
                 .id(2)
                 .name("User2")
                 .email("mail2@mail.ru")
@@ -144,7 +144,7 @@ public class UserServiceIntegrationTest {
 
         userService.addUser(user2);
 
-        user3 = UserDto.builder()
+        user3 = User.builder()
                 .id(3)
                 .name("User3")
                 .email("mail3@mail.ru")

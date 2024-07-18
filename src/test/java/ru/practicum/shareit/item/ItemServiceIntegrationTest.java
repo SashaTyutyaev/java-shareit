@@ -8,6 +8,7 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemForOwnerDto;
 import ru.practicum.shareit.user.UserService;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class ItemServiceIntegrationTest {
     @Autowired
     UserService userService;
 
-    private UserDto user;
+    private User user;
     private ItemDto item;
     private ItemDto item2;
 
@@ -49,7 +50,7 @@ public class ItemServiceIntegrationTest {
     }
 
     private void createItemWithUser() {
-        user = UserDto.builder()
+        user = User.builder()
                 .id(1)
                 .name("User")
                 .email("mail@mail.ru")

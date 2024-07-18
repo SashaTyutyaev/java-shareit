@@ -18,9 +18,9 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public UserDto addUser(UserDto userDto) {
-        userRepository.save(UserMapper.toUser(userDto));
-        return userDto;
+    public UserDto addUser(User user) {
+        User userDto = userRepository.save(user);
+        return UserMapper.toUserDto(userDto);
     }
 
     public UserDto updateUser(User user, Integer userId) {

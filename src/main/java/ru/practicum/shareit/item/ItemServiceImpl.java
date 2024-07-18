@@ -225,14 +225,10 @@ public class ItemServiceImpl implements ItemService {
     private void setCommentsToItem(Item item, ItemForOwnerDto itemForOwnerDto) {
         List<Comment> comments = commentRepository.findAllByItemId(item.getId());
 
-        if (!comments.isEmpty()) {
-            List<CommentDto> commentDtos = comments.stream()
-                    .map(CommentMapper::toCommentDto)
-                    .collect(Collectors.toList());
+        List<CommentDto> commentDtos = comments.stream()
+                .map(CommentMapper::toCommentDto)
+                .collect(Collectors.toList());
 
-            itemForOwnerDto.setComments(commentDtos);
-        } else {
-            log.info("There is no comments for item with id {}", item.getId());
-        }
+        itemForOwnerDto.setComments(commentDtos);
     }
 }

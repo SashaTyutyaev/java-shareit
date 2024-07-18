@@ -43,7 +43,7 @@ class UserServiceTest {
     void addUserSuccess() {
         when(userRepository.save(user)).thenReturn(user);
         UserDto userDto = UserMapper.toUserDto(user);
-        UserDto userDto1 = userService.addUser(userDto);
+        UserDto userDto1 = userService.addUser(user);
 
         assertNotNull(userDto1);
         assertEquals(userDto, userDto1);

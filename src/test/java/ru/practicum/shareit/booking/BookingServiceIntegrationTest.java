@@ -75,7 +75,7 @@ public class BookingServiceIntegrationTest {
                 .email("mail@mail.ru")
                 .build();
 
-        userService.addUser(UserMapper.toUserDto(user));
+        userService.addUser(user);
 
         user2 = User.builder()
                 .id(2)
@@ -83,7 +83,7 @@ public class BookingServiceIntegrationTest {
                 .email("mail2@mail.ru")
                 .build();
 
-        userService.addUser(UserMapper.toUserDto(user2));
+        userService.addUser(user2);
 
         item = ItemDto.builder()
                 .id(1)

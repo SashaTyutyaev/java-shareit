@@ -10,6 +10,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
@@ -36,56 +37,62 @@ class UserControllerTest {
 
     private final EasyRandom generator = new EasyRandom();
 
+    private User user;
     private UserDto userDto;
 
     @BeforeEach
     void setUp() {
-        userDto = generator.nextObject(UserDto.class);
+        user = generator.nextObject(User.class);
+        userDto = UserDto.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .build();
     }
 
     @Test
     void addUserSuccess() throws Exception {
-        userDto.setEmail("user@mail.ru");
-        when(userService.addUser(userDto)).thenReturn(userDto);
+        user.setEmail("user@mail.ru");
+        when(userService.addUser(user)).thenReturn(userDto);
 
         mvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(userDto)))
+                        .content(objectMapper.writeValueAsString(user)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(userDto.getId()));
+                .andExpect(jsonPath("$.id").value(user.getId()));
     }
 
     @Test
     void addUserThrows400WhenEmailInvalid() throws Exception {
-        when(userService.addUser(userDto)).thenReturn(userDto);
+        when(userService.addUser(user)).thenReturn(userDto);
 
         mvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(userDto)))
+                        .content(objectMapper.writeValueAsString(user)))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void addUserThrows400WhenNameInvalid() throws Exception {
-        userDto.setEmail("user@mail.ru");
-        userDto.setName("");
-        when(userService.addUser(userDto)).thenReturn(userDto);
+        user.setEmail("user@mail.ru");
+        user.setName("");
+        when(userService.addUser(user)).thenReturn(userDto);
 
         mvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(userDto)))
+                        .content(objectMapper.writeValueAsString(user)))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void updateUserSuccess() throws Exception {
-        when(userService.updateUser(any(User.class), anyInt())).thenReturn(userDto);
+        when(userService.updateUser(any(User.class), anyInt())).thenReturn(UserMapper.toUserDto(user));
 
-        mvc.perform(patch("/users/{id}", userDto.getId())
+        mvc.perform(patch("/users/{id}", user.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(userDto)))
+                        .content(objectMapper.writeValueAsString(user)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(userDto.getId()));
+                .andExpect(jsonPath("$.id").value(user.getId()));
     }
 
     @Test
@@ -94,7 +101,7 @@ class UserControllerTest {
 
         mvc.perform(get("/users")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(List.of(userDto))))
+                        .content(objectMapper.writeValueAsString(List.of(user))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray());
     }
@@ -103,16 +110,16 @@ class UserControllerTest {
     void getUserByIdSuccess() throws Exception {
         when(userService.getUserDtoById(anyInt())).thenReturn(userDto);
 
-        mvc.perform(get("/users/{id}", userDto.getId())
+        mvc.perform(get("/users/{id}", user.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(userDto)))
+                        .content(objectMapper.writeValueAsString(user)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(userDto.getId()));
+                .andExpect(jsonPath("$.id").value(user.getId()));
     }
 
     @Test
     void deleteUserById() throws Exception {
-        mvc.perform(delete("/users/{id}", userDto.getId()))
+        mvc.perform(delete("/users/{id}", user.getId()))
                 .andExpect(status().isOk());
     }
 }
