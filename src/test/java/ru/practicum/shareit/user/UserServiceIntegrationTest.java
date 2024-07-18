@@ -6,9 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.practicum.shareit.exceptions.EntityNotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -119,7 +121,8 @@ public class UserServiceIntegrationTest {
         assertEquals(3, users.size());
 
         userService.deleteUserById(1);
-        List<UserDto> usersAfterDel = userService.getAllUsers();
+        List<User> usersAfterDel = userService.getAllUsers()
+                .stream().map(UserMapper::toUser).collect(Collectors.toList());
 
         assertEquals(2, usersAfterDel.size());
         assertEquals(usersAfterDel.get(0), user2);
