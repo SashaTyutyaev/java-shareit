@@ -2,6 +2,8 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -13,6 +15,8 @@ import ru.practicum.shareit.exceptions.IncorrectParameterException;
 import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
@@ -34,16 +38,18 @@ public class ItemServiceImpl implements ItemService {
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
     private final BookingService bookingService;
+    private final ItemRequestRepository itemRequestRepository;
 
     private static final Sort SORT = Sort.by(Sort.Direction.ASC, "id");
 
 
     @Override
-    public ItemDto addItem(ItemDto item, Integer userId) {
+    public ItemDto addItem(ItemDto itemDto, Integer userId) {
         User user = getUserById(userId);
-        Item itemToSave = ItemMapper.toItemFromDto(item, user);
-        itemToSave.setOwner(user);
-        return ItemMapper.toItemDto(itemRepository.save(itemToSave));
+        ItemRequest itemRequest = getItemRequestById(itemDto.getRequestId());
+        Item item = ItemMapper.toItemFromDto(itemDto, user, itemRequest);
+        item.setOwner(user);
+        return ItemMapper.toItemDto(itemRepository.save(item));
     }
 
     @Override
@@ -70,9 +76,13 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemForOwnerDto> getAllItemsOfUser(Integer userId) {
+    public List<ItemForOwnerDto> getAllItemsOfUser(Integer userId, Integer from, Integer size) {
         getUserById(userId);
-        List<Item> items = itemRepository.findAllByOwnerId(userId, SORT);
+        List<Item> items;
+        validatePageable(from, size);
+        Pageable pageable = PageRequest.of(from, size, SORT);
+
+        items = itemRepository.findAllByOwnerId(userId, pageable);
 
         List<ItemForOwnerDto> itemForOwnerDtoList = new ArrayList<>();
 
@@ -99,14 +109,18 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> searchItems(String text) {
+    public List<ItemDto> searchItems(String text, Integer from, Integer size) {
         if (text == null || text.isEmpty() || text.isBlank()) {
             return Collections.emptyList();
-        } else {
-            return itemRepository.findByText(text).stream()
-                    .map(ItemMapper::toItemDto)
-                    .collect(Collectors.toList());
         }
+
+        validatePageable(from, size);
+        Pageable pageable = PageRequest.of(from, size);
+
+        return itemRepository.findByText(text, pageable).stream()
+                .map(ItemMapper::toItemDto)
+                .collect(Collectors.toList());
+
     }
 
     @Override
@@ -114,7 +128,7 @@ public class ItemServiceImpl implements ItemService {
         User author = getUserById(userId);
         Item item = getItemById(itemId);
 
-        List<BookingDto> bookingDtos = bookingService.getAllByBookerId(userId, State.PAST.name());
+        List<BookingDto> bookingDtos = bookingService.getAllByBookerId(userId, State.PAST.name(), 0, 100);
 
         boolean isOwnerOfTheItemBookings = bookingDtos.stream()
                 .anyMatch(bookingDto -> bookingDto.getItemId().equals(itemId)
@@ -130,6 +144,17 @@ public class ItemServiceImpl implements ItemService {
         return CommentMapper.toCommentDto(commentRepository.save(comment));
     }
 
+    private void validatePageable(Integer from, Integer size) {
+        if (from == null || from < 0) {
+            log.error("Params from and size must be higher than 0");
+            throw new IncorrectParameterException("Params from and size must be higher than 0");
+        }
+        if (size == null || size < 0) {
+            log.error("Params from and size must be higher than 0");
+            throw new IncorrectParameterException("Params from and size must be higher than 0");
+        }
+    }
+
     private Item getItemById(Integer itemId) {
         return itemRepository.findById(itemId).orElseThrow(() -> {
             log.error("The item with id {} is not found", itemId);
@@ -142,6 +167,17 @@ public class ItemServiceImpl implements ItemService {
             log.error("The user with id {} is not found", userId);
             return new EntityNotFoundException("The user with id " + userId + " is not found");
         });
+    }
+
+    private ItemRequest getItemRequestById(Integer itemRequestId) {
+        ItemRequest request = null;
+        if (itemRequestId != null && itemRequestId > 0) {
+            request = itemRequestRepository.findById(itemRequestId).orElseThrow(() -> {
+                log.error("The item request with id {} is not found", itemRequestId);
+                return new EntityNotFoundException("The item request with id " + itemRequestId + " is not found");
+            });
+        }
+        return request;
     }
 
     private Booking getLastBooking(List<Booking> bookings) {

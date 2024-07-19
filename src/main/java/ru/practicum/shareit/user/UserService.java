@@ -3,25 +3,22 @@ package ru.practicum.shareit.user;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 import ru.practicum.shareit.exceptions.EntityNotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.model.User;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Validated
 @AllArgsConstructor
 @Slf4j
 public class UserService {
 
     private final UserRepository userRepository;
 
-    public UserDto addUser(@Valid User user) {
+    public UserDto addUser(User user) {
         User userDto = userRepository.save(user);
         return UserMapper.toUserDto(userDto);
     }
@@ -37,7 +34,7 @@ public class UserService {
             user2.setName(user.getName());
         }
 
-        User userDto = userRepository.save(user2);
+        User userDto = userRepository.saveAndFlush(user2);
         return UserMapper.toUserDto(userDto);
     }
 

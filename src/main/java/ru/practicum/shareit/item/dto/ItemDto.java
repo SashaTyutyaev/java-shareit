@@ -22,10 +22,13 @@ public class ItemDto implements Serializable {
     private String name;
 
     @NotNull
+    @NotEmpty
     private String description;
 
     private Integer ownerId;
 
     @NotNull
     private Boolean available;
+
+    private Integer requestId;
 }

@@ -4,8 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 /**
  * TODO Sprint add-item-requests.
@@ -24,5 +26,12 @@ public class ItemRequest {
 
     @Column(name = "description")
     private String description;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "requestor_id")
+    private User requestor;
+
+    @Column(name = "created_date")
+    private LocalDateTime createdDate;
 
 }
