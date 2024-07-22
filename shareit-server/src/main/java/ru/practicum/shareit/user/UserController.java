@@ -19,7 +19,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public UserDto addUser(@RequestBody @Valid User user) {
+    public UserDto addUser(@RequestBody User user) {
         return userService.addUser(user);
     }
 

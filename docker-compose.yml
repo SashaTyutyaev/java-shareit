@@ -27,12 +27,9 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
       POSTGRES_DB: shareit
-#      TZ: "Europe/Moscow"
     volumes:
       - ./shareit-server/src/main/resources/schema.sql:/docker-entrypoint-initdb.d/schema.sql
       - db-data:/var/lib/postgresql/data
-#      - /etc/localtime:/etc/localtime:ro
-#      - /etc/timezone:/etc/timezone:ro
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -q -d $${POSTGRES_DB} -U $${POSTGRES_USER}" ]
       interval: 10s
@@ -52,12 +49,8 @@ services:
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
       SPRING_DATASOURCE_DRIVER-CLASS-NAME: org.postgresql.Driver
-#      TZ: "Europe/Moscow"
     ports:
       - "9090:9090"
-#    volumes:
-#      - /etc/localtime:/etc/localtime:ro
-#      - /etc/timezone:/etc/timezone:ro
     healthcheck:
       test: [ "CMD-SHELL", "curl -f http://localhost:9090/actuator/health || exit 1" ]
       interval: 30s
