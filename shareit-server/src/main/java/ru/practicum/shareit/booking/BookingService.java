@@ -29,6 +29,9 @@ public class BookingService {
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
 
+    private static final Sort SORT = Sort.by(Sort.Direction.DESC, "startDate");
+
+
     public BookingDto createBooking(BookingDto bookingDto, Integer userId) {
 
         User user = getUserById(userId);
@@ -101,10 +104,8 @@ public class BookingService {
         List<Booking> bookings;
         try {
             getUserById(ownerId);
-            validatePageable(from, size);
+            Pageable pageable = validatePageable(from, size);
             State bookingState = State.valueOf(state);
-            Sort sort = Sort.by(Sort.Direction.DESC, "startDate");
-            Pageable pageable = PageRequest.of(from, size, sort);
             bookings = getBookingsByOwnerId(ownerId, bookingState, pageable);
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Unknown state: " + state);
@@ -215,7 +216,7 @@ public class BookingService {
         });
     }
 
-    private void validatePageable(Integer from, Integer size) {
+    private Pageable validatePageable(Integer from, Integer size) {
         if (from == null || from < 0) {
             log.error("Params from and size must be higher than 0");
             throw new IncorrectParameterException("Params from and size must be higher than 0");
@@ -224,6 +225,8 @@ public class BookingService {
             log.error("Params from and size must be higher than 0");
             throw new IncorrectParameterException("Params from and size must be higher than 0");
         }
+
+        return PageRequest.of(from, size, SORT);
     }
 
 }

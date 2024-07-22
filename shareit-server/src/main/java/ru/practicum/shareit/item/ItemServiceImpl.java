@@ -79,8 +79,7 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemForOwnerDto> getAllItemsOfUser(Integer userId, Integer from, Integer size) {
         getUserById(userId);
         List<Item> items;
-        validatePageable(from, size);
-        Pageable pageable = PageRequest.of(from, size, SORT);
+        Pageable pageable = validatePageable(from, size);
 
         items = itemRepository.findAllByOwnerId(userId, pageable);
 
@@ -114,8 +113,7 @@ public class ItemServiceImpl implements ItemService {
             return Collections.emptyList();
         }
 
-        validatePageable(from, size);
-        Pageable pageable = PageRequest.of(from, size);
+        Pageable pageable = validatePageable(from, size);
 
         return itemRepository.findByText(text, pageable).stream()
                 .map(ItemMapper::toItemDto)
@@ -144,7 +142,7 @@ public class ItemServiceImpl implements ItemService {
         return CommentMapper.toCommentDto(commentRepository.save(comment));
     }
 
-    private void validatePageable(Integer from, Integer size) {
+    private Pageable validatePageable(Integer from, Integer size) {
         if (from == null || from < 0) {
             log.error("Params from and size must be higher than 0");
             throw new IncorrectParameterException("Params from and size must be higher than 0");
@@ -153,6 +151,8 @@ public class ItemServiceImpl implements ItemService {
             log.error("Params from and size must be higher than 0");
             throw new IncorrectParameterException("Params from and size must be higher than 0");
         }
+
+        return PageRequest.of(from, size, SORT);
     }
 
     private Item getItemById(Integer itemId) {
