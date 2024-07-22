@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestForOwnerDto;
 
-import javax.validation.Valid;
 import java.util.List;
 
 /**
