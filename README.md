@@ -10,22 +10,22 @@
 [![JUnit](https://img.shields.io/badge/JUnit-25A162?style=for-the-badge&logo=junit5&logoColor=white)](https://junit.org/junit5/)
 [![Postman](https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=postman&logoColor=white)](https://www.postman.com/)
 
-Java ShareIt - это приложение для аренды и обмена вещами. Проект реализован на языке Java и включает в себя backend с использованием Spring Boot.
+Java ShareIt is an application for renting and exchanging items. The project is implemented in Java and includes a backend using Spring Boot.
 
-## Оглавление
+## Table of Contents
 
-- [Описание](#описание)
-- [Технологии](#технологии)
-- [Установка](#установка)
-- [Использование](#использование)
+- [Description](#description)
+- [Technologies](#technologies)
+- [Installation](#installation)
+- [Usage](#usage)
 
-## Описание
+## Description
 
-Java ShareIt - это сервис, который позволяет пользователям делиться своими вещами с другими. Вы можете добавлять свои вещи в каталог, просматривать вещи других пользователей, запрашивать аренду и обмениваться вещами.
+Java ShareIt is a service that allows users to share their items with others. You can add your items to the catalog, view items from other users, request rentals, and exchange items.
 
-## Технологии
+## Technologies
 
-Проект использует следующие технологии и фреймворки:
+The project uses the following technologies and frameworks:
 
 - Java 11
 - Spring Boot
@@ -38,44 +38,44 @@ Java ShareIt - это сервис, который позволяет польз
 - Maven
 - Postman
 
-## Установка
+## Installation
 
-Для установки проекта на ваш локальный компьютер выполните следующие шаги:
+To install the project on your local machine, follow these steps:
 
-1. Клонируйте репозиторий:
+1. Clone the repository:
     ```sh
     git clone https://github.com/SashaTyutyaev/java-shareit.git
     ```
 
-2. Перейдите в директорию проекта:
+2. Navigate to the project directory:
     ```sh
     cd java-shareit
     ```
 
-3. Установите зависимости:
+3. Install dependencies:
     ```sh
     mvn install
     ```
 
-4. Настройте базу данных PostgreSQL и измените параметры подключения в файле `application.properties`.
+4. Set up PostgreSQL database and modify the connection parameters in the `application.properties` file.
 
-5. Запустите приложение:
+5. Run the application:
     ```sh
     mvn spring-boot:run
     ```
 
-## Использование
+## Usage
 
-После успешного запуска приложения, API будет доступен по адресу `http://localhost:8080`.
+After successfully running the application, the API will be available at `http://localhost:8080`.
 
-### Примеры запросов
+### Sample Requests
 
-- **Получить все вещи:**
+- **Get all items:**
     ```sh
     GET /items
     ```
 
-- **Добавить новую вещь:**
+- **Add a new item::**
     ```sh
     POST /items
     {
@@ -85,7 +85,7 @@ Java ShareIt - это сервис, который позволяет польз
     }
     ```
 
-- **Запросить аренду вещи:**
+- **Request to rent an item:**
     ```sh
     POST /items/{itemId}/request
     ```
