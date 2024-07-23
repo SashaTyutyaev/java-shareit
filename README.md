@@ -84,7 +84,3 @@ Java ShareIt - это сервис, который позволяет польз
     ```sh
     POST /items/{itemId}/request
     ```
-
-## Документация
-
-Подробная документация доступна в файле [API_DOCUMENTATION.md](API_DOCUMENTATION.md).
