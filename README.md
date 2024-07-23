@@ -1,7 +1,5 @@
 # Java ShareIt
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-
 Java ShareIt - это приложение для аренды и обмена вещами. Проект реализован на языке Java и включает в себя backend с использованием Spring Boot.
 
 ## Оглавление
